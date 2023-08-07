@@ -12,6 +12,8 @@ const Form = () => {
     wantsNewsletter: false,
   })
 
+  const [showAlert, setShowAlert] = useState(false)
+
   const schema = z.object({
     firstName: z.string().min(3),
     lastName: z.string().min(2),
@@ -19,8 +21,6 @@ const Form = () => {
     password: z.string().min(6).max(15),
     confirmPassword: z.string().min(6).max(15),
     wantsNewsletter: z.boolean()
-  }).refine(data => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
   })
 
   function handleChange(e) {
@@ -32,8 +32,17 @@ const Form = () => {
       }
     })
     // TODO: Add on keyup check if password !== confirmPassword
-
+    if (name === "confirmPassword") {
+      setShowAlert(formData.password !== value)
+    }
   }
+
+  // function handleKeyUp(e) {
+  //   const { name, value } = e.target
+  //   if (name === "confirmPassword") {
+  //     setPasswordsMatch(formData.password === formData.confirmPassword)
+  //   }
+  // }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -100,8 +109,11 @@ const Form = () => {
         className="form-input"
         onChange={handleChange}
         value={formData.confirmPassword}
+      // onBlur={handleKeyUp}
+      // onKeyUp={handleKeyUp}
       />
       <label htmlFor="confirmPassword" className="sr-only">First Name</label>
+      {!showAlert && alert("Passwords do not match!")}
       <div className="newsletter">
         <input
           type="checkbox"
