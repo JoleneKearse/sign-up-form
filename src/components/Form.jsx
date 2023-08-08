@@ -1,6 +1,5 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { z } from "zod"
-
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -12,16 +11,22 @@ const Form = () => {
     wantsNewsletter: false,
   })
 
-  const [showAlert, setShowAlert] = useState(false)
+  const [showEmailAlert, setShowEmailAlert] = useState(false)
+  const [errors, setErrors] = useState([])
 
   const schema = z.object({
-    firstName: z.string().min(3),
+    firstName: z.string().min(2),
     lastName: z.string().min(2),
     email: z.string().email(),
     password: z.string().min(6).max(15),
     confirmPassword: z.string().min(6).max(15),
     wantsNewsletter: z.boolean()
-  })
+  }).refine(
+    (data) => data.password !== data.confirmPassword,
+    {
+      message: "Passwords do not match"
+    }
+  )
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target
@@ -31,18 +36,14 @@ const Form = () => {
         [name]: type === "checkbox" ? checked : value
       }
     })
-    // TODO: Add on keyup check if password !== confirmPassword
-    if (name === "confirmPassword") {
-      setShowAlert(formData.password !== value)
-    }
   }
 
-  // function handleKeyUp(e) {
-  //   const { name, value } = e.target
-  //   if (name === "confirmPassword") {
-  //     setPasswordsMatch(formData.password === formData.confirmPassword)
-  //   }
-  // }
+  function handleKeyUp(e) {
+    const { name, value } = e.target
+    if (name === "confirmPassword") {
+      setShowEmailAlert(formData.password !== value)
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -53,15 +54,20 @@ const Form = () => {
       schema.parse(formData)
       console.log(formData)
       console.log("Success!")
+      setErrors([])
     } catch (error) {
-      console.log(error)
+      console.log(error.format())
+      setErrors(error.format())
+
     }
-    console.log(formData)
   }
+
+  useEffect(() => {
+    console.log(errors)
+  }, [errors])
 
   return (
     <form>
-      <h2 className="form-title">Sign up here!</h2>
       <input
         type="text"
         name="firstName"
@@ -72,6 +78,13 @@ const Form = () => {
         value={formData.firstName}
       />
       <label htmlFor="firstName" className="sr-only">First Name</label>
+      {errors.firstName && (
+        <div className="error-container">
+          {errors.firstName._errors.map((message, index) => (
+            <p key={index}>{message}</p>
+          ))}
+        </div>
+      )}
       <input
         type="text"
         name="lastName"
@@ -82,6 +95,13 @@ const Form = () => {
         value={formData.lastName}
       />
       <label htmlFor="lastName" className="sr-only">Last Name</label>
+      {errors.lastName && (
+        <div className="error-container">
+          {errors.lastName._errors.map((message, index) => (
+            <p key={index}>{message}</p>
+          ))}
+        </div>
+      )}
       <input
         type="email"
         name="email"
@@ -101,6 +121,13 @@ const Form = () => {
         onChange={handleChange}
         value={formData.password}
       /><label htmlFor="password" className="sr-only">Password</label>
+      {errors.password && (
+        <div className="error-container">
+          {errors.password._errors.map((message, index) => (
+            <p key={index}>{message}</p>
+          ))}
+        </div>
+      )}
       <input
         type="password"
         name="confirmPassword"
@@ -109,11 +136,15 @@ const Form = () => {
         className="form-input"
         onChange={handleChange}
         value={formData.confirmPassword}
-      // onBlur={handleKeyUp}
+        onBlur={handleKeyUp}
       // onKeyUp={handleKeyUp}
       />
       <label htmlFor="confirmPassword" className="sr-only">First Name</label>
-      {!showAlert && alert("Passwords do not match!")}
+      {showEmailAlert && (
+        <div className="error-container">
+          <p>Passwords do not match</p>
+        </div>
+      )}
       <div className="newsletter">
         <input
           type="checkbox"
@@ -124,13 +155,13 @@ const Form = () => {
           value={formData.wantsNewsletter}
           style={{ boxShadow: formData.wantsNewsletter ? "none" : "inset 1.15em 1.15em var(--clr-neutral-200) !important" }}
         />
-        <label htmlFor="wantsNewsletter">Check here to receive our newsletter.</label>
+        <label htmlFor="wantsNewsletter" className="newsletter-label">Check here to receive our newsletter.</label>
       </div>
       <button
         type="submit"
         className="submitBtn"
         onClick={handleSubmit}
-      >Sign Up</button>
+      >Sign up</button>
     </form>
   )
 }

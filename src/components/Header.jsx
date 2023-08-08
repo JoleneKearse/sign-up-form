@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <header>
       <img src={logo} className="logo" alt="" />
-      <h3 className="site-title">Web Awesome</h3>
+      <h3 className="gradient-text">Web Awesome</h3>
     </header>
   )
 }
