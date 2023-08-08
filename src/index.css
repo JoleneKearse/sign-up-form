@@ -59,14 +59,19 @@ button {
   cursor: pointer;
 }
 
+h1 {
+  color: var(--clr-neutral-800);
+}
+
 .gradient-text {
   background: -webkit-linear-gradient(45deg, var(--clr-yellow), var(--clr-orange), var(--clr-red));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-h1 {
-  color: var(--clr-neutral-800);
+.inline {
+  display: inline-block;
 }
 
 h3 {
@@ -186,4 +191,28 @@ form {
 .submitBtn:focus {
   background-position: left;
   -webkit-text-stroke:.025rem #160a19;
+}
+
+@media (max-width: 800px) {
+  main {
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 550px) {
+  main {
+    padding: var(--spacing-med);
+  }
+}
+
+@media (max-width: 477px) {
+  main {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 350px) {
+  main {
+    padding: var(--spacing-sm);
+  }
 }
