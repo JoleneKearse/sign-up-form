@@ -155,12 +155,14 @@ form {
   border: none;
   border-radius: .25em;
   background-color: var(--clr-orange);
-  background: var(--gradient);
-  transition: all 100ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  background-image: var(--gradient);
+  background-size: 200%;
+  background-position: right;
+  font-weight: 500;
+  transition: background-position 500ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
 .submitBtn:hover,
 .submitBtn:focus {
-  background: var(--gradient-flip);
-  font-weight: 500;
+  background-position: left;
 }
